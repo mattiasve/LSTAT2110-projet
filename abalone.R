@@ -5,6 +5,7 @@ library(reshape2)
 library(devtools)
 library(factoextra)
 library(ggplot2)
+library(MASS)
 
 
 #### ---- description données ----- 
@@ -112,3 +113,13 @@ plot(res2, choix = "ind", habillage = 9,
      label='none') +theme_gray()
 
 
+#-------- ANALYSE DISCRIMINANTE LINEAIRE ------
+# dataset pour LDA 
+abalone.lda <- lda(Type ~ ., 
+                   data = abalone, 
+                   method = "mle") 
+abalone.lda
+
+z <- predict(abalone.lda)$x
+z2 <- data.frame(z, abalone[,1])
+cor(abalone[, 1], z)
