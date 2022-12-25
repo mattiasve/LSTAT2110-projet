@@ -144,11 +144,11 @@ VaP <- as.data.frame(VaP)
 t(VaP)
 ```
 On s'intèresse ensuite au pourcentage de la variance ainsi qu'au pourcentage de la variance cumulée. Cela permet de mettre en évidence la quantité d'information retenue par chaque composante. 
-```{r echo=FALSE}
+```{r echo=FALSE, fig.width=11,fig.height=5, fig.align='center', fig.cap="\\label{fig:figs}Pourcentages de variance et de variance cumulée"}
 # pourcentage de variance et variance cumulée
 par(mfrow=c(1,2))
 barplot(res$eig[,"percentage of variance"], xlab = "Composantes", ylab="Pourcentage de variance")
 barplot(res$eig[,"cumulative percentage of variance"],xlab="Composantes",ylab="Pourcentage cumulatif de variance")
 ```
 
-La première composante correspond à une valeur propre de 6,72 et capte à elle seule 83,9% de la variance totale tandis que la deuxième composante en capte 8,69%. C'est-à-dire que les deux premières composantes captent à elles seules 92,6% de la variance totale. On notera tout de même que la troisième et quatrième composantes captent respectivement 3,23% et 2,07% de la variance totale, ce qui est relativement faible en soit mais largement supérieur aux dernières composantes. 
+La première composante correspond à une valeur propre de 6,71 et capte à elle seule 83,9% de la variance totale tandis que la deuxième composante en capte 8,69%. C'est-à-dire que les deux premières composantes captent à elles seules 92,6% de la variance totale. On notera tout de même que la troisième et quatrième composantes captent respectivement 3,23% et 2,07% de la variance totale, ce qui est relativement faible en soit mais largement supérieur aux dernières composantes. 
