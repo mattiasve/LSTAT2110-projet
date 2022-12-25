@@ -1,0 +1,154 @@
+---
+title: "Projet LSTAT2110(A) -- Analyse de données"
+subtitle: 'Etude des mesures physiques des abalones par âge et sexe'
+author: \small Louis Descarpentries (3004 18 00 - BIRE2M) - Mattias VAN EETVELT (1660 18 00 - BIRE2M)
+Date : Décembre 2022
+output:
+  pdf_document:
+    number_sections: yes
+    toc: yes
+    toc_depth: 3
+    fig_caption: yes
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '3'
+  word_document:
+    toc: yes
+    toc_depth: '3'
+header-includes:
+   - \usepackage{floatrow}
+   - \floatsetup[figure]{capposition=bottom}
+   - \captionsetup[figure]{font=tiny}
+   - \captionsetup[figure]{skip=0pt}
+geometry: a4paper    #margin=2cm
+---
+\pagenumbering{gobble}
+\newpage
+\pagenumbering{arabic}
+
+<!-- En haut, compliter/supprimer selon besoin. -->
+<!-- Voir les consignes pour le projet. -->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(comment = "")
+```
+
+```{r libraries, echo=FALSE, message=FALSE, warning=FALSE}
+library(data.table)
+library(naniar)
+library(FactoMineR)
+library(reshape2)
+library(devtools)
+library(factoextra)
+library(ggplot2)
+library(MASS)
+```
+
+
+\newpage
+# Introduction
+
+Ce projet rentre dans le cadre du cours *LSTAT2110A – Analyse des données*, et a pour but de mettre en pratique deux méthodes vues en théorie. Celles-ci seront appliquées sur une base de données issue d’Eurostat (détaillée dans la section 2).
+
+La première méthode consiste en une Analyse en Composantes Principales (ACP). Il s’agit d’une méthode de projection projetant les observations d’un espace à $p$ dimensions avec $p$ variables vers un espace à $k$ dimensions où $k < p$. Ainsi, cette technique permet de simplifier la visualisation de la matrice de données, mais aussi de transformer les variables initiales en variables non corrélées (diminue la redondance) (XLSTAT,2022). Ces nouvelles variables sont appelées Composantes Principales, classées en fonction de leur degré de similarité par rapport à l’initial. 
+
+Ces étapes préalables sont nécessaires pour diverses représentations graphiques par la suite, comme le cercle des corrélations (corrélations entre les composantes) et la carte des individus (individus en fonction des composantes principales).
+
+La seconde méthode correspond à une analyse de classification, permettant de grouper des objets dans des classes, en fonction de leur degré de similarité (les objets les plus similaires sont regroupés dans la même classe). Cette seconde méthode peut se diviser en plusieurs analyses de classification comme : classification hiérarchique, K-means clustering, analyse discriminante Linéaire (XLSTAT, 2022).
+
+# Présentation des données et analyse descriptives
+
+## Présentation des données
+La base de données utilisée dans le cadre de ce projet est issue du site Kaggle, une plateforme web appartenant à Google qui rassemble des bases de données, du code utile au traitement de certaines problématiques du domaine de la Sciences des données, et plus largement, une plateforme qui permet des échanges entre passionnés, professionnels et novices de la Science des données (Kaggle, 2021).
+
+Dans le cadre de ce projet, la base de données choisie a été publié en 2018 sur la plateforme par Rodolfo Mendes. Il est à noter que M. Mendes n’est pas le producteur des chiffres présentés car il se base sur les données issues d’une étude réalisée en 1994 par Warwick J Nash, Tracy L Sellers, Simon R Talbot, Andrew J Cawthorn et Wes B Ford dont les chiffres ont été publié par Sam Waugh du département d’informatique de l’Université de Tasmanie (UCI, 1995).
+
+L’objet de la base de données concerne les ormeaux ou Abalone, et plus particulièrement les mesures physiques de ceux-ci. Le but original était de catégoriser les mollusques selon leur âge sur base de mesures physiques (détail dans la suite de la section) et ensuite pouvoir établir un modèle d’extrapolation à l’ensemble de la population pour connaître l’âge sans avoir à faire des mesures sur le terrain.
+
+Avant tout développement, et de manière à faciliter la compréhension dans la suite du rapport, il semble important de décrire les caractéristiques de l’ormeau. Haliotis tuberculata ou ormeau est un mollusque mesurant 8 à 11 cm à maturité possédant une coquille ovale, aplatie, en forme d’oreille et percée de trous alignés suivant sa croissance lui facilitant sa respiration. L’intérieur de sa coquille est nacré, ce qui le rend convoité dans la fabrication de bijoux par exemple. Cette espèce est présente en Méditerranée, en Atlantique nord, dans la Manche, en Mer du Nord et se développe dans des environnements rocailleux car elle se nourrit d’algue en rappant les roches.
+L’ormeau est très convoité en gastronomie, ce qui a mené à sa surpêche dans différents pays, lui conférant aujourd’hui un statut de protection et des normes de pêche très réglementées. Toutefois, l’élevage d’ormeau s’est développé ces dix dernières années, et ce notamment en France (Muséum-Aquarium de Nancy, s.d.).
+
+La matrice étudiée comporte **8 variables quantitatives**, représentant différentes mesures physiques du mollusque à savoir : LongestShell (longueur de la coquille en mm), Diameter (diamètre perpendiculaire à la longueur en mm), Height (hauteur avec viande dans la coquille en mm), WholeWeight (poids entier en grammes), ShuckedWeight (poids entier une fois décoquillé en gramme) , VisceraWeight (poids boyaux après saignée en grammes), ShellWeight (poids coquille après séchage en grammes), Rings (nombre d’anneaux, donne l’âge lorsqu’on additionne 1,5 au chiffre). La base de données reprend également une variable catégorielle nommée type qui reprend **trois types de mollusques** : M pour Male, F pour Female et I pour Infant. 
+Enfin, le jeu de données est divisé en **4177 observations** divisées équitablement (37% de mâles, 32% de jeunes, 31% de femelles) entre I (infant), M (male), F (female). 
+
+Finalement, il est évident que ce type de données est relativement important pour étudier la dynamique des populations d’ormeau. En effet, comme énoncé précédemment, le modèle mathématique réalisé sur base de cette base de données, et une fois couplé avec des facteurs extérieurs, permet de connaître l’âge des individus. Cela n’est pas anodin car ces coquillages sont menacés par le changement climatique, et plus précisément l’acidification des océans, mais aussi la surexploitation. Par conséquent, connaître les écosystèmes les plus favorables au développement de l’espèce pourrait favoriser leur protection (BOREA, 2017). 
+ 
+
+
+## Analyse descriptive
+
+Afin d’avoir un aperçu génerale des données, la fonction `summary()` est utilisée. Celle-ci permet d’avoir des informations sur des quantiles, minimum et maximum, médiane et moyenne de chaque variable. Afin de rester concis, seules les moyennes de chaque variables selon leur catégorie respective sont présentées. Néanmois, l’output complet de la fonction `summary()` est présenté en annexe. Les longueurs sont en millimètres tandis que les poids sont en grammes.
+
+```{r echo=FALSE}
+# import data
+abalone <- read.csv('abalone.csv')
+abalone$Type <- as.factor(abalone$Type)
+#summary(abalone)
+
+moyennes <- round(colMeans(abalone[2:9]),3)
+moyennes <- as.data.frame(moyennes)
+t(moyennes)
+```
+On observe que le poids total (`WholeWeight`) est principalement composé par le poids total une fois décoquillé (`ShuckedWeight`) ainsi que par le poids de la coquille. Le poids des boyaux après la saignée (`VisecraWeight`), ne représente quant à elle qu'environ 20% du poids total.
+
+
+Dans un second temps, il est intéressant d’analyser la matrice de correlation afin d’avoir une idée des correlations entre les différentes variables quantitatives. Les variables fortement correlées auront une correlation de 1 et dans le cas contraire, de -1. Une correlation de 0 indiquera une indépendance des variables.
+
+```{r echo=FALSE}
+# 2. Matrice de corrélation
+corr <- round(cor(abalone[2:9]), digits = 2)
+melted_corr <- melt(corr)
+
+corr_matrix <- ggplot(data = melted_corr, aes(x=Var1, y=Var2, fill=value)) + 
+  geom_tile() +
+  geom_text(aes(Var2, Var1, label = value), color = "white", size = 4) +
+  theme(
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    plot.title = element_text(size=14, hjust = 0.5),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1) )
+corr_matrix
+```
+
+
+# Analyse en composante principales
+L’analyse descriptive permet d'avoir une idée globale des relations entre les variables et des moyennes générales, mais reste assez floue vu le nombre de variables et d’individus que comporte la base de données choisie.
+L’Analyse en Composantes Principales va permettre de réduire ces dimensions afin de faciliter l’interprétation. L’objectif de cette partie est donc de trouver des liens clairs entre les différentes variables et d’observer comment les individus sont influencés par celles-ci.
+
+## Application de l'Analyse en Composantes Principales (ACP)
+
+L'ACP est réalisée grâce à la fonction `PCA()` du package `FactoMineR`. Cette dernière centre et réduit les données afin de former la matrice standardisée $\mathbf{Z}$ . Autrement dit, pour $n$ observations 
+
+$$ \mathbf{Z} = \frac{X_{ij} - \bar{X_j}}{\sqrt{n}s_j} $$
+Ou $\bar{X_j}$ est la moyenne et $s_j$ la variance. La matrice de corrélation est également calculée et est définie de la manière suivante
+$$ \mathbf{Z}'\mathbf{Z} = \mathbf{R} $$
+Les vecteurs propres ainsi que les valeurs propres correspondantes de la matrice $\mathbf{R}$ sont calculés. Les valeurs propres (`VaP`) sont présentées ci-dessous par ordre croissant.
+Celles-ci sont essentielles à la PCA puisque le choix du sous-espace représentant les données se fait sur base des deux valeurs propres les plus élevées, associés aux vecteurs propres les plus grands.
+
+On observe que la première composante apporte énormément d'informations comparé aux autres composantes. La quantité d'information approtée par le deuxième, troisième et quatrième composante est non négligeable, ce qui n'est pas le cas pour les quatres dernières.
+
+```{r echo=FALSE}
+#préparer la PCA
+Dataset_PCA <- abalone[2:9]
+R <- cor(Dataset_PCA)
+res<-PCA(Dataset_PCA, graph=FALSE)
+
+# Vecteurs propres et valeurs propres :
+VaP <- eigen(R)$values
+VaP <- as.data.frame(VaP)
+t(VaP)
+```
+On s'intèresse ensuite au pourcentage de la variance ainsi qu'au pourcentage de la variance cumulée. Cela permet de mettre en évidence la quantité d'information retenue par chaque composante. 
+```{r echo=FALSE}
+# pourcentage de variance et variance cumulée
+par(mfrow=c(1,2))
+barplot(res$eig[,"percentage of variance"], xlab = "Composantes", ylab="Pourcentage de variance")
+barplot(res$eig[,"cumulative percentage of variance"],xlab="Composantes",ylab="Pourcentage cumulatif de variance")
+```
+
+La première composante correspond à une valeur propre de 6,72 et capte à elle seule 83,9% de la variance totale tandis que la deuxième composante en capte 8,69%. C'est-à-dire que les deux premières composantes captent à elles seules 92,6% de la variance totale. On notera tout de même que la troisième et quatrième composantes captent respectivement 3,23% et 2,07% de la variance totale, ce qui est relativement faible en soit mais largement supérieur aux dernières composantes. 
