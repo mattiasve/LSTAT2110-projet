@@ -139,7 +139,7 @@ R <- cor(Dataset_PCA)
 res<-PCA(Dataset_PCA, graph=FALSE)
 
 # Vecteurs propres et valeurs propres :
-VaP <- eigen(R)$values
+VaP <- round(eigen(R)$values,4)
 VaP <- as.data.frame(VaP)
 t(VaP)
 ```
@@ -152,3 +152,68 @@ barplot(res$eig[,"cumulative percentage of variance"],xlab="Composantes",ylab="P
 ```
 
 La première composante correspond à une valeur propre de 6,71 et capte à elle seule 83,9% de la variance totale tandis que la deuxième composante en capte 8,69%. C'est-à-dire que les deux premières composantes captent à elles seules 92,6% de la variance totale. On notera tout de même que la troisième et quatrième composantes captent respectivement 3,23% et 2,07% de la variance totale, ce qui est relativement faible en soit mais largement supérieur aux dernières composantes. 
+
+## Choix des composantes principales retenues
+Pour interpréter et visualiser les résultats de l'analyse en composantes principales, il faut choisir le nombre de composantes à garder. Une limite arbitraire souvent fixée est de garder toutes les composantes dont la valeur propre est supérieure à 1. Ceci est visible sur la figure 2.
+```{r echo=FALSE, fig.width=10,fig.height=5, fig.align='center', fig.cap="\\label{fig:figs}Composantes principales à garder"}
+# Combien de composantes retenir
+par(mfrow=c(1,1))
+barplot(res$eig[,"eigenvalue"], xlab = "Composantes", ylab="Valeur propre")
+abline(h = 1, lty = "dashed")
+```
+Seule une seule composante possède une valeur supérieur à 1. Cependant, il faut au minimum deux composantes afin de pouvoir visualier les résultats. Il semble dès lors logique de choisir la composante avec la seconde valeur la plus élevée, la composante numéro 2. 
+
+Il existe une autre méthode afin de choisir les bonnes composantes. Il est intéressant de choisir les composantes situées avant un “coude” dans le graphe des valeurs propres ou des pourcentages de variance. En effet, ce coude témoignera du fait que le gain d’information en passant à la composante suivante est relativement faible et n’en vaut donc pas la peine. Cette seconde méthode confirme le choix initial de choisir les deux premières composantes, comme le témoigne le coude présent sur la figure 3 à la troisième composante.
+
+
+```{r echo=FALSE, fig.width=10, fig.height=5, , fig.align='center', fig.cap="\\label{fig:figs}Valeurs propres et pourcentages de variance"}
+#Valeurs propres et pourcentages de variance
+par(mfrow=c(1,2))
+plot(res$eig[,"eigenvalue"],type="l",xlab="Composantes",ylab="Valeurs propres")
+plot(res$eig[,"percentage of variance"],type="l",xlab="Composantes",ylab="Pourcentage de variance")
+```
+## Résultats et discussion
+### Analyse des variables
+
+Le choix de garder deux composantes pincipales simplifie la représentation mais a comme conséquence de ne représenter correctement que certaines variables. Les variables considérées comme mal représentées dans le plan choisi sont celles qui auront un angle de plus de 45° avec ce plan ($cos^2$ > 0,5). 
+
+Les valeurs ci-dessous représente la qualité de représentation dans le premier plan factoriel. On observe que toutes les variables sont bien représentées. Seule la variable `Height` a un $cos^2$ inférieur à 0.9 mais cela reste une valeur acceptable. Concernant les contributions, toutes les variables sauf `Rings` contribuent avec une valeur de l'ordre de 15\% dans la dimension 1 tandis que `Rings` contribue à 84 \% dans la dimension 2 et uniquement 5\% dans la dimension 1. Le détail de toutes les dimensions est présenté en annexe.
+```{r echo=FALSE}
+cos2 <- round(sort(rowSums(res$var$cos2[,1:2])), digits = 3)   
+contrib <- round(sort(rowSums(res$var$contrib[,1:2])), digits = 3)
+cos2 <- as.data.frame(cos2)
+contrib <- as.data.frame(contrib)
+df_var <- data.frame(cos2, contrib)
+colnames(df_var) <- c('cos2 [-]', 'contribution [%]')
+t(df_var)
+```
+
+Finalement, le cercle de corrélation est présenté sur la figure 5. Cela permet de visuliser les résultats discutés ci-dessus.
+On observe que toutes les variables sont bien représentés. En effet, la longueur des flèches est proche de 1, sauf celle de la variable `Height`. De plus, `Rings` est la seule variable dont la représentation est de bonne qualité dans la dimension 2, toutes les autres variables sont bien représentées dans la dimension 1.
+```{r echo=FALSE, fig.width=5, fig.height=5, ,fig.align='center', fig.cap="\\label{fig:figs}Cercle de corrélation"}
+## cercle de corrélation
+plot.PCA(res, choix = "var", axes=c(1,2))
+```
+
+
+\newpage
+# Annexe
+
+## truc
+
+## Qualité de représentations des variables
+### Score pour $cos^2$ 
+```{r echo=FALSE}
+res$var$cos2
+```
+
+### Score pour la contribution
+```{r echo=FALSE}
+res$var$contrib 
+```
+## Cercle de corrélation
+```{r echo=FALSE, fig.width=5, fig.height=5, ,fig.align='center', fig.cap="\\label{fig:figs}Cercle de corrélation"}
+plot.PCA(res, choix = "var", axes=c(1,2))
+
+```
+
