@@ -21,7 +21,7 @@ header-includes:
    - \floatsetup[figure]{capposition=bottom}
    - \captionsetup[figure]{font=tiny}
    - \captionsetup[figure]{skip=0pt}
-geometry: a4paper    #margin=2cm
+geometry: a4paper, margin=2.5cm
 ---
 \pagenumbering{gobble}
 \newpage
@@ -50,9 +50,9 @@ library(MASS)
 \newpage
 # Introduction
 
-Ce projet rentre dans le cadre du cours *LSTAT2110A – Analyse des données*, et a pour but de mettre en pratique deux méthodes vues en théorie. Celles-ci seront appliquées sur une base de données issue d’Eurostat (détaillée dans la section 2).
+Ce projet rentre dans le cadre du cours *LSTAT2110A – Analyse des données*, et a pour but de mettre en pratique deux méthodes vues en théorie. Celles-ci seront appliquées sur une base de données issue de Kaggle (détaillée dans la section 2).
 
-La première méthode consiste en une Analyse en Composantes Principales (ACP). Il s’agit d’une méthode de projection projetant les observations d’un espace à $p$ dimensions avec $p$ variables vers un espace à $k$ dimensions où $k < p$. Ainsi, cette technique permet de simplifier la visualisation de la matrice de données, mais aussi de transformer les variables initiales en variables non corrélées (diminue la redondance) (XLSTAT,2022). Ces nouvelles variables sont appelées Composantes Principales, classées en fonction de leur degré de similarité par rapport à l’initial. 
+La première méthode consiste en une Analyse en Composantes Principales (ACP). Il s’agit d’une méthode projetant les observations d’un espace à $p$ dimensions avec $p$ variables vers un espace à $k$ dimensions où $k < p$. Ainsi, cette technique permet de simplifier la visualisation de la matrice de données, mais aussi de transformer les variables initiales en variables non corrélées (diminue la redondance) (XLSTAT,2022). Ces nouvelles variables sont appelées Composantes Principales, classées en fonction de leur degré de similarité par rapport à l’initial. 
 
 Ces étapes préalables sont nécessaires pour diverses représentations graphiques par la suite, comme le cercle des corrélations (corrélations entre les composantes) et la carte des individus (individus en fonction des composantes principales).
 
@@ -65,12 +65,12 @@ La base de données utilisée dans le cadre de ce projet est issue du site Kaggl
 
 Dans le cadre de ce projet, la base de données choisie a été publié en 2018 sur la plateforme par Rodolfo Mendes. Il est à noter que M. Mendes n’est pas le producteur des chiffres présentés car il se base sur les données issues d’une étude réalisée en 1994 par Warwick J Nash, Tracy L Sellers, Simon R Talbot, Andrew J Cawthorn et Wes B Ford dont les chiffres ont été publié par Sam Waugh du département d’informatique de l’Université de Tasmanie (UCI, 1995).
 
-L’objet de la base de données concerne les ormeaux ou Abalone, et plus particulièrement les mesures physiques de ceux-ci. Le but original était de catégoriser les mollusques selon leur âge sur base de mesures physiques (détail dans la suite de la section) et ensuite pouvoir établir un modèle d’extrapolation à l’ensemble de la population pour connaître l’âge sans avoir à faire des mesures sur le terrain.
+L’objet de la base de données concerne les ormeaux ou Abalone, et plus particulièrement les mesures physiques de ceux-ci. Le but original était de catégoriser les mollusques selon leur âge sur base de mesures physiques (détail dans la suite de la section), et ensuite pouvoir établir un modèle d’extrapolation à l’ensemble de la population pour connaître l’âge sans avoir à faire des mesures sur le terrain.
 
-Avant tout développement, et de manière à faciliter la compréhension dans la suite du rapport, il semble important de décrire les caractéristiques de l’ormeau. Haliotis tuberculata ou ormeau est un mollusque mesurant 8 à 11 cm à maturité possédant une coquille ovale, aplatie, en forme d’oreille et percée de trous alignés suivant sa croissance lui facilitant sa respiration. L’intérieur de sa coquille est nacré, ce qui le rend convoité dans la fabrication de bijoux par exemple. Cette espèce est présente en Méditerranée, en Atlantique nord, dans la Manche, en Mer du Nord et se développe dans des environnements rocailleux car elle se nourrit d’algue en rappant les roches.
+Avant tout développement, et de manière à faciliter la compréhension dans la suite du rapport, il semble important de décrire les caractéristiques de l’ormeau. *Haliotis tuberculata* ou ormeau est un mollusque mesurant 8 à 11 cm à maturité, possédant une coquille ovale, aplatie, en forme d’oreille et percée de trous alignés suivant sa croissance lui facilitant sa respiration. L’intérieur de sa coquille est nacré, ce qui le rend convoité dans la fabrication de bijoux par exemple. Cette espèce est présente en Méditerranée, en Atlantique nord, dans la Manche, en Mer du Nord et se développe dans des environnements rocailleux car elle se nourrit d’algue en rappant les roches.
 L’ormeau est très convoité en gastronomie, ce qui a mené à sa surpêche dans différents pays, lui conférant aujourd’hui un statut de protection et des normes de pêche très réglementées. Toutefois, l’élevage d’ormeau s’est développé ces dix dernières années, et ce notamment en France (Muséum-Aquarium de Nancy, s.d.).
 
-La matrice étudiée comporte **8 variables quantitatives**, représentant différentes mesures physiques du mollusque à savoir : LongestShell (longueur de la coquille en mm), Diameter (diamètre perpendiculaire à la longueur en mm), Height (hauteur avec viande dans la coquille en mm), WholeWeight (poids entier en grammes), ShuckedWeight (poids entier une fois décoquillé en gramme) , VisceraWeight (poids boyaux après saignée en grammes), ShellWeight (poids coquille après séchage en grammes), Rings (nombre d’anneaux, donne l’âge lorsqu’on additionne 1,5 au chiffre). La base de données reprend également une variable catégorielle nommée type qui reprend **trois types de mollusques** : M pour Male, F pour Female et I pour Infant. 
+La matrice étudiée comporte **8 variables quantitatives**, représentant différentes mesures physiques du mollusque à savoir : LongestShell (longueur de la coquille en mm), Diameter (diamètre perpendiculaire à la longueur en mm), Height (hauteur avec viande dans la coquille en mm), WholeWeight (poids entier en grammes), ShuckedWeight (poids entier une fois décoquillé en gramme) , VisceraWeight (poids boyaux après saignée en grammes), ShellWeight (poids coquille après séchage en grammes), Rings (nombre d’anneaux, donne l’âge lorsqu’on additionne 1,5 au chiffre). La base de données reprend également une variable catégorielle nommée *type* qui reprend **trois types de mollusques** : M pour Male, F pour Female et I pour Infant. 
 Enfin, le jeu de données est divisé en **4177 observations** divisées équitablement (37% de mâles, 32% de jeunes, 31% de femelles) entre I (infant), M (male), F (female). 
 
 Finalement, il est évident que ce type de données est relativement important pour étudier la dynamique des populations d’ormeau. En effet, comme énoncé précédemment, le modèle mathématique réalisé sur base de cette base de données, et une fois couplé avec des facteurs extérieurs, permet de connaître l’âge des individus. Cela n’est pas anodin car ces coquillages sont menacés par le changement climatique, et plus précisément l’acidification des océans, mais aussi la surexploitation. Par conséquent, connaître les écosystèmes les plus favorables au développement de l’espèce pourrait favoriser leur protection (BOREA, 2017). 
@@ -79,7 +79,7 @@ Finalement, il est évident que ce type de données est relativement important p
 
 ## Analyse descriptive
 
-Afin d’avoir un aperçu génerale des données, la fonction `summary()` est utilisée. Celle-ci permet d’avoir des informations sur des quantiles, minimum et maximum, médiane et moyenne de chaque variable. Afin de rester concis, seules les moyennes de chaque variables selon leur catégorie respective sont présentées. Néanmois, l’output complet de la fonction `summary()` est présenté en annexe. Les longueurs sont en millimètres tandis que les poids sont en grammes.
+Afin d’avoir un aperçu géneral des données, la fonction `summary()` est utilisée. Celle-ci permet d’avoir des informations sur des quantiles, minimum et maximum, médiane et moyenne de chaque variable. Afin de rester concis, seules les moyennes de chaque variables selon leur catégorie respective sont présentées. Néanmois, l’output complet de la fonction `summary()` est présenté en annexe. Les longueurs sont en millimètres tandis que les poids sont en grammes.
 
 ```{r echo=FALSE}
 # import data
@@ -96,7 +96,7 @@ On observe que le poids total (`WholeWeight`) est principalement composé par le
 
 Dans un second temps, il est intéressant d’analyser la matrice de correlation afin d’avoir une idée des correlations entre les différentes variables quantitatives. Les variables fortement correlées auront une correlation de 1 et dans le cas contraire, de -1. Une correlation de 0 indiquera une indépendance des variables.
 
-```{r echo=FALSE}
+```{r echo=FALSE, out.width='75%', fig.align='center'}
 # 2. Matrice de corrélation
 corr <- round(cor(abalone[2:9]), digits = 2)
 melted_corr <- melt(corr)
@@ -114,6 +114,11 @@ corr_matrix <- ggplot(data = melted_corr, aes(x=Var1, y=Var2, fill=value)) +
     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1) )
 corr_matrix
 ```
+Les variables *Diameter* et *LongestShell* s'avèrent être les plus corrélées, cela s'explique sûrement par le fait qu'au plus la coquille grandit, au plus le diamètre grandit également. En outre, *Shellweight*, *VisceraWeight*, *Shuckedweight* sont fortement liés à *WholeWeight*, cela semble logique car ces variables sont des constituants du poids total, ainsi elles l'influencent parfois positivement, parfois négativement. 
+Outre cela, il est possible de constater certaines subtilités, c'est par exemple le cas entre *VisceraWeight* et *ShellWeight* par rapport à *ShuckedWeight*. En effet, il est possible de constater que *VisceraWeight* est plus corrélé à *ShuckedWeight*, cela est tout à fait pertinent car *ShuckedWeight* représente le poids décoquillé, c'est donc les composantes du mollusque en tant que tel qui ont le plus d'influcence pour ce type de poids. 
+
+Enfin, il est possible de remarquer que la variable *Rings* est la moins corrélée aux autres variables, possiblement car il s'agit d'excroissances sur la coquille qui ne se forment pas selon un processus linéaire. 
+
 
 
 # Analyse en composante principales
@@ -128,9 +133,9 @@ $$ \mathbf{Z} = \frac{X_{ij} - \bar{X_j}}{\sqrt{n}s_j} $$
 Ou $\bar{X_j}$ est la moyenne et $s_j$ la variance. La matrice de corrélation est également calculée et est définie de la manière suivante
 $$ \mathbf{Z}'\mathbf{Z} = \mathbf{R} $$
 Les vecteurs propres ainsi que les valeurs propres correspondantes de la matrice $\mathbf{R}$ sont calculés. Les valeurs propres (`VaP`) sont présentées ci-dessous par ordre croissant.
-Celles-ci sont essentielles à la PCA puisque le choix du sous-espace représentant les données se fait sur base des deux valeurs propres les plus élevées, associés aux vecteurs propres les plus grands.
+Celles-ci sont essentielles à la PCA puisque le choix du sous-espace représentant les données se fait sur base des deux valeurs propres les plus élevées, associées aux vecteurs propres les plus grands.
 
-On observe que la première composante apporte énormément d'informations comparé aux autres composantes. La quantité d'information approtée par le deuxième, troisième et quatrième composante est non négligeable, ce qui n'est pas le cas pour les quatres dernières.
+On observe que la première composante apporte énormément d'informations comparé aux autres composantes. La quantité d'information apportée par la deuxième, troisième et quatrième composante est non négligeable, ce qui n'est pas le cas pour les quatres dernières.
 
 ```{r echo=FALSE}
 #préparer la PCA
@@ -151,7 +156,7 @@ barplot(res$eig[,"percentage of variance"], xlab = "Composantes", ylab="Pourcent
 barplot(res$eig[,"cumulative percentage of variance"],xlab="Composantes",ylab="Pourcentage cumulatif de variance")
 ```
 
-La première composante correspond à une valeur propre de 6,71 et capte à elle seule 83,9% de la variance totale tandis que la deuxième composante en capte 8,69%. C'est-à-dire que les deux premières composantes captent à elles seules 92,6% de la variance totale. On notera tout de même que la troisième et quatrième composantes captent respectivement 3,23% et 2,07% de la variance totale, ce qui est relativement faible en soit mais largement supérieur aux dernières composantes. 
+La première composante correspond à une valeur propre de 6,71 et capte à elle seule 83,9% de la variance totale, tandis que la deuxième composante en capte 8,69%. Cela veut dire que les deux premières composantes captent à elles seules 92,6% de la variance totale. Il est à notifier que la troisième et quatrième composante captent respectivement 3,23% et 2,07% de la variance totale, ce qui est relativement faible en soit, mais largement supérieur aux dernières composantes. 
 
 ## Choix des composantes principales retenues
 Pour interpréter et visualiser les résultats de l'analyse en composantes principales, il faut choisir le nombre de composantes à garder. Une limite arbitraire souvent fixée est de garder toutes les composantes dont la valeur propre est supérieure à 1. Ceci est visible sur la figure 2.
@@ -161,9 +166,9 @@ par(mfrow=c(1,1))
 barplot(res$eig[,"eigenvalue"], xlab = "Composantes", ylab="Valeur propre")
 abline(h = 1, lty = "dashed")
 ```
-Seule une seule composante possède une valeur supérieur à 1. Cependant, il faut au minimum deux composantes afin de pouvoir visualier les résultats. Il semble dès lors logique de choisir la composante avec la seconde valeur la plus élevée, la composante numéro 2. 
+Seule une seule composante possède une valeur supérieur à 1. Cependant, il faut au minimum deux composantes afin de pouvoir visualier les résultats en 2D. Il semble dès lors logique de choisir la composante avec la seconde valeur la plus élevée, la composante numéro 2. 
 
-Il existe une autre méthode afin de choisir les bonnes composantes. Il est intéressant de choisir les composantes situées avant un “coude” dans le graphe des valeurs propres ou des pourcentages de variance. En effet, ce coude témoignera du fait que le gain d’information en passant à la composante suivante est relativement faible et n’en vaut donc pas la peine. Cette seconde méthode confirme le choix initial de choisir les deux premières composantes, comme le témoigne le coude présent sur la figure 3 à la troisième composante.
+Il existe une autre méthode afin de choisir les bonnes composantes. Il est intéressant de choisir les composantes situées avant un “coude” dans le graphe des valeurs propres ou des pourcentages de variance. En effet, ce coude témoigne du fait que le gain d’information en passant à la composante suivante est relativement faible, et est dond relativement négligeable. Cette seconde méthode confirme l'utilité de choisir les deux premières composantes, comme le témoigne le coude présent sur la figure 3 à la troisième composante.
 
 
 ```{r echo=FALSE, fig.width=10, fig.height=5, , fig.align='center', fig.cap="\\label{fig:figs}Valeurs propres et pourcentages de variance"}
@@ -172,12 +177,13 @@ par(mfrow=c(1,2))
 plot(res$eig[,"eigenvalue"],type="l",xlab="Composantes",ylab="Valeurs propres")
 plot(res$eig[,"percentage of variance"],type="l",xlab="Composantes",ylab="Pourcentage de variance")
 ```
+\newpage
 ## Résultats et discussion
 ### Analyse des variables
 
-Le choix de garder deux composantes pincipales simplifie la représentation mais a comme conséquence de ne représenter correctement que certaines variables. Les variables considérées comme mal représentées dans le plan choisi sont celles qui auront un angle de plus de 45° avec ce plan ($cos^2$ > 0,5). 
+Le choix de garder deux composantes pincipales simplifie la représentation, mais a comme conséquence de ne représenter correctement que certaines variables. Les variables considérées comme mal représentées dans le plan choisi sont celles qui auront un angle de plus de 45° avec ce plan ($cos^2$ > 0,5). 
 
-Les valeurs ci-dessous représente la qualité de représentation dans le premier plan factoriel. On observe que toutes les variables sont bien représentées. Seule la variable `Height` a un $cos^2$ inférieur à 0.9 mais cela reste une valeur acceptable. Concernant les contributions, toutes les variables sauf `Rings` contribuent avec une valeur de l'ordre de 15\% dans la dimension 1 tandis que `Rings` contribue à 84 \% dans la dimension 2 et uniquement 5\% dans la dimension 1. Le détail de toutes les dimensions est présenté en annexe.
+Les valeurs ci-dessous représentent la qualité de représentation dans le premier plan factoriel. On observe que toutes les variables sont bien représentées à l'exception de la variable `Height` qui a un $cos^2$ inférieur à 0.9, toutefois cela reste une valeur acceptable. Concernant les contributions, toutes les variables sauf `Rings` contribuent avec une valeur de l'ordre de 15\% dans la dimension 1, tandis que `Rings` contribue à 84 \% dans la dimension 2 et uniquement 5\% dans la dimension 1. Le détail de toutes les dimensions est présenté en annexe.
 ```{r echo=FALSE}
 cos2 <- round(sort(rowSums(res$var$cos2[,1:2])), digits = 3)   
 contrib <- round(sort(rowSums(res$var$contrib[,1:2])), digits = 3)
@@ -188,32 +194,203 @@ colnames(df_var) <- c('cos2 [-]', 'contribution [%]')
 t(df_var)
 ```
 
-Finalement, le cercle de corrélation est présenté sur la figure 5. Cela permet de visuliser les résultats discutés ci-dessus.
-On observe que toutes les variables sont bien représentés. En effet, la longueur des flèches est proche de 1, sauf celle de la variable `Height`. De plus, `Rings` est la seule variable dont la représentation est de bonne qualité dans la dimension 2, toutes les autres variables sont bien représentées dans la dimension 1.
-```{r echo=FALSE, fig.width=5, fig.height=5, ,fig.align='center', fig.cap="\\label{fig:figs}Cercle de corrélation"}
+Finalement, le cercle de corrélation est présenté sur la figure 4. Cela permet de visualiser les résultats discutés ci-dessus.
+On observe que toutes les variables sont bien représentées. En effet, la longueur des flèches est proche de 1, correspondant à $cos^2$, sauf celle de la variable `Height`. De plus, comparé aux autres variables, `Rings` est la seule dont la représentation est de bonne qualité dans la dimension 2. Il est à noter que le pourcentage de variance capté par les diférents axes est visible le long de ceux-ci.
+Une figure de plus grande taille est prensentée en annexe pour plus de lisibilité.
+```{r echo=FALSE, fig.width=4, fig.height=4, ,fig.align='center', fig.cap="\\label{fig:figs}Cercle de corrélation"}
 ## cercle de corrélation
 plot.PCA(res, choix = "var", axes=c(1,2))
 ```
+\newpage
+### Analyse des individus
+Etant donné le nombre important d'individus (>4000), il n'est pas pertinent de présenter les résultats concernant la qualité de représentation pour tous les individus. Une alternative est la représentation visuelle et son interprétation. 
 
+Pour le score $cos^2$ ainsi que pour la contribution, les tendances sont les mêmes au sein des trois catégories. Pour $cos^2$, la majorité des individus sont très bien représentés dans le premier plan factoriel même si certains ont des valeurs inférieures à $0,5$. Concernant la contribution, celle-ci est relativement faible avec une valeur moyenne inférieure à 10\%. Certains individus sont mieux représentés avec des valeurs atteignant 75\%, et pour le type `infant`, cette valeur maximale vaut 50\%.
+```{r echo=FALSE,out.width="49%",out.height="49%",fig.show='hold',fig.align='center', fig.cap="Distribution du score $cos^2$ ainsi que la contribution pour le premier plan factoriel pour les individus"}
+#individus mal représenté sur les 2 premières composantes
+cos2_ind <- as.data.frame(round(sort(rowSums(res$ind$cos2[,1:2])), digits = 3))
+contrib_ind <- as.data.frame(round(sort(rowSums(res$ind$contrib[,1:2])), digits = 3))
+df_ind <- data.frame(cos2_ind, contrib_ind, as.factor((abalone[,1])))
+colnames(df_ind) <- c('cos2 [-]', 'contribution [%]', 'Type')
+
+vcos <-ggplot(df_ind, aes(x = df_ind$Type, y = df_ind$`cos2 [-]`, color=df_ind$Type)) +
+  geom_violin() +  xlab('Type') + ylab('cos2') + labs(color='Type')
+vcos
+
+vcontrib <-ggplot(df_ind, aes(x = df_ind$Type, y = df_ind$`contribution [%]`, color=df_ind$Type)) +
+  geom_violin() +  xlab('Type') + ylab('Contribution [%]') + labs(color='Type')
+vcontrib
+```
+
+La carte des individus mise en comparaison avec le cercle des corrélations s'avère utile pour visualiser les liens possibles entre les individus et les variables (représentées dans le cercle des corrélations). Ainsi, cette section s'efforcera de mettre en parallèle les résultats obtenus avec des explications logiques détaillant les diverses corrélations plus ou moins marquées. 
+
+Pour commencer, il est utile de préciser que l’ormeau garde sa coquille toute sa vie, mais il y a une phase de latence durant son stade « I » Infant. De plus, durant ce stade, comme la coquille est « neuve », il n’y pas de cernes, cela explique la corrélation inverse voir l’anticorrélation entre la catégorie « I » dans le nuage d’individus par rapport à la variables Rings dans le cercle des corrélations (les points de couleur verte se trouvent pour la majorité dans le sens inverse de la flèche). 
+Dans une moindre mesure, cette tendance peut se répliquer aux autres variables. En effet, cela semble évident car durant les premiers stades de développement, l’ormeau possède des mesures physiques relativement faibles (petit poids, petite coquille, petit diamètre).
+
+En outre, il est possible de remarquer une correlation marquée entre ShellWeight, Height, LongestShell, Diameter, WholeWeight, VisceraWeight, ShuckedWeight car toutes ces variables évoluent de la même manière lorsque l’individu grandit. Cela peut être visualisé en comparant le nuage d'invividus et le cercle des corrélations. En effet, les points appartenant à la classe "F" et "M" (individus d'un âge plus avancé que ceux de la classe "I") se placent dans le même quadrant et dans la même dimension que les variables précédemment citées. 
+La variable rings quant à elle est moins groupée aux autres variables précédemment citées, cela peut être lié au fait que la coquille grandit moins vite que le poids par exemple, ou encore que la formation des anneaux sur la coquille soit plus longue que la croissance du mollusque. Néanmoins, la tendance visible sur le nuage d'individus (l'enchainement des individus se fait des individus "I" vers "F" et "M") semble suivre la dynamique de la variable rings dans le cercle des corrélation (le tracé global des individus est dirigé vers le quadrant en haut à droite tout comme la variable rings), cela confirme donc que la croissance (et particulièrement l'âge) évolue en synergie avec le nombre d'anneaux. 
+Cette tendance a d’ailleurs déjà été expliquée lors de l’interprétation de la matrice des corrélations dans la section précédente. 
+
+```{r echo=FALSE ,fig.align='center', fig.cap="\\label{fig:figs}Carte des individus"}
+# carte des individus
+## avec sexe
+Dataset_PCA2 <- cbind(Dataset_PCA, abalone[1])
+res2 <- PCA(Dataset_PCA2, ncp = 2, graph = FALSE, 
+           quali.sup = c(9))
+plot(res2, choix = "ind", habillage = 9,
+     col.hab=c('lightsalmon', 'darkolivegreen4', 'steelblue1'), 
+     label='none') +theme_gray()+ggtitle('')
+```
+
+# Analyse de classification : Analyse discriminante linéaire
+Dans le cadre de ce projet, la classification est réalisée à l’aide d’une Analyse discriminante linéaire (LDA). Cependant, il aurait été possible de faire usage de la méthode K-means ou encore d’une méthode de classification hiérarchique (hierarchical cluster analysis). Ces deux méthodes permettent de créer de nouvelles classes, dans le cas présent, celles-ci auraient pu être des distinctions plus poussées en fonction des caractéristiques physiques de l’individu.
+
+Néanmoins, l’objectif principal de ce projet est de prédire l’âge de l’ormeau en fonction de ses caractéristiques physiques. En effet, comme cela a déjà été explicité dans l’introduction, coupler l’âge aux caractéristiques environnementales (non traitées dans le cadre du projet) permet de connaître la répartition des individus par écosystème étudié et la dynamique des populations d’ormeaux. Par conséquent, l’utilisation d’une LDA parait être le choix le plus pertinent car celle-ci permettra de prédire l’âge sur base des caractéristiques physiques, mais aussi de donner les variables les plus déterminantes pour la séparation des classes d’individus.
+
+## Analyse discriminante linéaire
+
+L'analyse discriminante linéaire décrit des tendances similaires à l'ACP, car le premier axe canonique capte 98% de l'inertie totale. Il est également possible de constater que certain individus semble être relativement éloignés de "la masse". Cela peut être causé par des erreurs de prise de mesures sur le terrain, ou à l'inverse, que ces individus présentent des caractéristiques phyiques singulières. 
+
+De manière qualitative, cette classification a permis de différencier les individus plus efficacement que lors de l'analyse en composante principale, néanmoins, celle-ci est loin d'être optimale. En effet, il est possible de voir que les *infant* se différencient mieux des mâles et des femelles, qui sont encore relativement mélangés. 
+Ce phénomène peut s'expliquer par le fait que les mâles et femelles ont des caractéristiques physiques relativement semblabes comparé aux juvéniles. Cela semble en adéquation avec le but principal du modèle qui a pour but de différencier les différents âges des individus (les mâles et femelles peuvent être assimilés à un stade adulte comparé à la classe *infant*). 
+Ainsi, il serait nécessaire de prendre en compte davantage de caractéristiques lors de la prise de mesures pour fournir un modèle qui différencie à la fois les âges et les différents sexes de manière plus optimale. 
+
+
+```{r echo=FALSE , fig.align='center', out.width='75%', fig.cap="\\label{fig:figs}LDA - Variables canoniques"}
+abalone.lda <- lda(Type ~ ., 
+                   data = abalone, 
+                   method = "mle") 
+#abalone.lda
+
+z <- predict(abalone.lda)$x
+z2 <- data.frame(z, abalone[,1])
+#cor(abalone[, 1], z)
+
+ggplot(data=z2, aes(LD1, LD2,color=z2$abalone...1.)) + 
+  geom_point(shape=20,size=1) +
+  scale_color_manual(values=c('lightsalmon', 'darkolivegreen4', 'steelblue1')) +
+  labs(color='Type') +
+  theme_gray()
+```
+## Prédiction
+
+Dans cette section, le but est de prédire la classe d'une nouvelle observation en l'associant avec la classe dont le centre en coordonnées canoniques est le plus proche. La proximité des centres n'est pas le seul facteur influancant la classification car il faut tenir compte des probabilités à priori. Dans le cas présent, les probabilités sont relativement similaires car l'échantillon de base est équilibré (37% de mâles, 32% de jeunes, 31% de femelles). Ainsi, ce facteur n'influencera que très peu la prédiction. 
+
+Ci-dessous, il est possible de voir les caractéristiques physiques choisies aléatoirement pour deux nouvelles observations (cela peut donc être répliqué avec d'autres dimensions).
+```{r echo=FALSE}
+new <- matrix(c(0.400,0.300,0.090,0.500,0.2000,0.1000,0.1500, 12),nrow=1) #nouvelles observations random
+colnames(new) <- colnames(abalone)[2:9]                                    #nom des colones
+rownames(new) <- "new"
+new <- as.data.frame(new)
+new
+```
+```{r echo=FALSE}
+new2 <- matrix(c(0.8,0.6,0.15,0.7,0.5,0.3000,0.4500, 22),nrow=1) #nouvelles observations random
+colnames(new2) <- colnames(abalone)[2:9]                                    #nom des colones
+rownames(new2) <- "new2"
+new2 <- as.data.frame(new2)
+new2
+```
+```{r echo=FALSE}
+# Prédiction d'un nouvel individu 
+Prédiction <- predict(abalone.lda, newdata = new)$class
+Prédiction <- as.data.frame(Prédiction)
+pred_new <- t(Prédiction)
+colnames(pred_new) <- "new"
+pred_new
+```
+Ainsi, pour cette première observation, la classe prédite en fonction des caractéristiques physiques aléatoires est celle des juvéniles (*infant*).
+```{r echo=FALSE}
+# Prédiction d'un nouvel individu 
+Prédiction <- predict(abalone.lda, newdata = new2)$class
+Prédiction <- as.data.frame(Prédiction)
+pred_new2 <- t(Prédiction)
+colnames(pred_new2) <- "new2"
+pred_new2
+```
+En revanche, lorsque les dimensions sont modifiées légèrement, la classe prédite change. De ce fait, en ayant augmenté la valeur des caractéristiques physiques par rapport à la première nouvelle observation, il est possible de voir que la prédiction ne se porte plus sur la classe des juvéniles, mais sur celle des femelles (*females*).
+
+## Qualité
+A la suite des prédictions, il semble pertinent d'étudier la qualité de la discrimination réalisée. Dans le cas présent, l'exactitude est calculée en fonction de la fréquence à laquelle le modèle répartit correctement les nouvelles observations dans les différentes classes. 
+
+Le tableau de contingence ci-dessous met en relation les "vraies valeurs" issues de la base de de données (lignes du tableau), avec les classes prédites (colonnes du tableau). 
+```{r echo=FALSE}
+# Qualité :
+# Table de validation 
+Dataset.pred <- predict(abalone.lda, newdata = abalone[,2:9])$class
+Dataset_dataframe <- as.data.frame(abalone)
+validation <- table(Dataset_dataframe[,1], Dataset.pred)
+validation
+
+# Qualité de la règle de discrimination 
+qualité <- sum(diag(validation))/nrow(abalone)
+qualité
+```
+Enfin, à l'issue de cette méthode de vérification, il est possible de voir que la qualité vaut 0.549198, ce qui signifie que 54.92% des individus ont été bien classé. 
+Ce chiffre ne met pas forcément en exergue une classification optimale, mais cela peut s'expliquer par le fait que les individus (surtout les males et femelles) sont relativement mélangés, cela est d'ailleurs visible sur la figure de la LDA. 
+Par conséquent, le modèle éprouve des difficultés lors de la classification, ce qui peut expliquer l'exactitude d'environ 55%. 
+A l'avenir, il serait judicieux de revoir les critères de classification en modifiant ou en affinant les caractéristiques physiques dans le but d'accentuer la séparation entre individu, et ainsi augmenter l'exactitude de l'analyse discriminante linéaire.
+
+# Conclusion
+
+Pour plus de lisibilité, cette conclusion est divisée en deux sections, une comprenant un rétrospective de l'ACP et une autre dirigée sur l'analyse discriminante linéaire. 
+
+## Analyse en Composantes Principales (ACP):
+
+Cette analyse a tout d'abord permis de mettre en relation la matrice de corrélation avec l'analyse descriptives des différentes composantes de la base de données, ainsi que d'autres outils visuels comme le cercle des corrélations. 
+Le cercle des corrélations qui met en relation les différentes variables liées à l'analyse, n'a donc fait que confirmer les tendances visibles dans la matrice de corrélation.
+Ensuite,en mettant en parralèle le cercle des corrélations et la carte d'individus via le premier plan factoriel, il a été possible de relier les individus aux variables. Cette comparaison a mis en exergue les corrélations entre les mâles et femelles avec certaines caractéristiques physiques telles que les différents poids, les tailles, tout en montrant le phénomène inverse avec les ormeaux juvéniles.
+Cependant, en raison du nombre important d'observations, et par soucis de lisibilité, cette analyse s'avère simplifiée. En effet, seules les composantes les mieux représentées (composante 1 et 2 dans le cadre de ce projet) et qui par conséquent apportent le plus d'informations ont été retenu. De ce fait, à l'avenir, il serait intéressant de considérer plus de deux composantes pour en apprendre davantage sur les autres variables.
+
+## Analyse Discriminante Linéaire (LDA):
+
+La LDA a permis de classifier de manière plus efficace les indivdus entre eux (comparé à l'ACP), mais elle n'est pas parfaite pour autant. En effet, la classe des juvéniles semble mieux se différencier que les deux autres. Diverses hyptohèses ont été émise quant à l'orignie de cette difficulté, mais celle qui semble la plus probable est que les données relevées sur le terrain avaient pour but principal de différencier le stade de vie des ormeaux, et non pas les spécificités qu'il pourrait y avoir entre les sexes.  
+
+Pour terminer ce rapport, il est pertinent de mentionner que les outils utilisés dans le cadre de ce projet s'avèrent être précieux pour l'analyse de données. Cependant, la qualité des représentations et de l'information récoltée sont fortement liées à la base de données initiale. Cet effet a notamment été expliqué et démontré dans le cadre de l'Analyse Discriminante Linéaire où la classification reposait sur les critères de base, parfois non optimaux pour la différentiation des classes. 
+Outre la LDA, l'analyse de classification aurait pu être réalisé à l'aide d'autres outils comme le **K-means clustering** et le **hierarchical cluster analysis**. Cependant, ces outils nécessitent la création de nouveaux critères de classification nécessitant une connaissance plus profonde des caractéristiques intrinsèques des ormeaux. Ainsi, dans le cadre d'un projet plus conséquent, il serait utile de travailler conjointement avec des spécialistes pour affiner les critères, et ainsi perfectionner le modèle pour fournir une prédiction la plus optimale possible dans l'intérêt de tous. 
 
 \newpage
+
+# Bibliographie
+
+« Kaggle : Tout ce qu’il faut savoir sur cette plateforme ». Kaggle. 2021. Consulté le 2 décembre 2022 sur : https://datascientest.com/kaggle-tout-ce-quil-a-savoir-sur-cette-plateforme
+
+« Ormeau ». UCI. 1995. Consulté le 2 décembre 2022 sur : https://archive-beta.ics.uci.edu/dataset/1/abalone 
+
+« Ormeau Haliotis tuberculata ». Muséum-Aquarium de Nancy. S.D. consulté le 5 décembre 2022 sur https://especeaquatique.museumaquariumdenancy.eu/fiche_espece/204
+
+« Impact de l’acidification océanique sur la reproduction et le développement de l’ormeau Haliotis tuberculata». BOREA. 2017. Consulté le 4 décembre 2022 sur https://borea.mnhn.fr/fr/impact-l%E2%80%99acidification-oc%C3%A9anique-reproduction-d%C3%A9veloppement-l%E2%80%99ormeau-haliotis-tuberculata
+
+Dans le cadre de ce rapport, certaines ressources sont tirées du cours **LSTAT2110 - Analyse des données** enseigné par Johan Segers, donné lors de l'année académique 2022-2023, ainsi que des travaux pratiques supervisés par Lise Léonard.
+
+\newpage
+
 # Annexe
 
-## truc
+## Analyse descriptive
+### Détail de la fonction `summary`
+```{r echo=FALSE}
+summary(abalone)
+```
 
-## Qualité de représentations des variables
+## Analyse en composantes principales
 ### Score pour $cos^2$ 
 ```{r echo=FALSE}
 res$var$cos2
 ```
 
-### Score pour la contribution
+###  Score pour la contribution
 ```{r echo=FALSE}
 res$var$contrib 
 ```
-## Cercle de corrélation
-```{r echo=FALSE, fig.width=5, fig.height=5, ,fig.align='center', fig.cap="\\label{fig:figs}Cercle de corrélation"}
+
+### Cercle de corrélation
+```{r echo=FALSE, fig.width=6, fig.height=6, ,fig.align='center', fig.cap="\\label{fig:figs}Cercle de corrélation"}
 plot.PCA(res, choix = "var", axes=c(1,2))
 
+```
+## LDA
+```{r echo=FALSE}
+abalone.lda
 ```
 

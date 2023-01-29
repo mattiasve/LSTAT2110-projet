@@ -19,7 +19,7 @@ moyennes <- round(colMeans(abalone[2:9]),3)
 moyennes <- as.data.frame(moyennes)
 t(moyennes)
 
-#https://shapbio.me/courses/biolB215s14/abalone_cleaning.html
+#https://shapbio.me/courses/biolB215s14/abalone_cleaning.html 
 # clean dataset first!
 
 
@@ -44,7 +44,6 @@ corr_matrix
 Dataset_PCA <- abalone[2:9]
 R <- cor(Dataset_PCA)
 res<-PCA(Dataset_PCA, graph=FALSE)
-
 
 # Vecteurs propres et valeurs propres :
 VaP <- eigen(R)$values
@@ -92,15 +91,18 @@ res_t$Dim.2$quanti
 # individus mal représenté sur les 2 premières composantes
 cos2_ind <- as.data.frame(round(sort(rowSums(res$ind$cos2[,1:2])), digits = 3))
 contrib_ind <- as.data.frame(round(sort(rowSums(res$ind$contrib[,1:2])), digits = 3))
-df_ind <- data.frame(cos2_ind, contrib_ind)
-colnames(df_ind) <- c('cos2 [-]', 'contribution [%]')
+df_ind <- data.frame(cos2_ind, contrib_ind, as.factor((abalone[,1])))
+colnames(df_ind) <- c('cos2 [-]', 'contribution [%]', 'Type')
 t(df_ind)  # trop d'individus -> sert à rien
 #visualize summary
 summary(df_ind)
-# boxplot ?
-ggplot() +
-  geom_boxplot(data=df_ind, aes(y='cos2'))
 
+#violin plot
+v <- ggplot(df_ind, aes(x = df_ind$Type, y = df_ind$`cos2 [-]`, color=df_ind$Type)) +
+  geom_violin() +  
+  #geom_jitter(shape=16, position = position_jitter(0.2))
+  xlab('Type') + ylab('cos2') + labs(color='Type')
+v
 # carte des individus
 ## basique
 plot.PCA(res, choix = "ind", axes=c(1,2), label='none')
@@ -122,4 +124,8 @@ abalone.lda
 
 z <- predict(abalone.lda)$x
 z2 <- data.frame(z, abalone[,1])
-cor(abalone[, 1], z)
+#cor(abalone[, 1], z)
+
+ggplot(data=z2, aes(LD1, LD2,color=z2$abalone...1.)) + 
+  geom_point(shape=20,size=0.5) +
+  labs(color='Type')
